@@ -15,7 +15,7 @@ import (
 func main() {
 	// 원본 파일 및 변환 파일 저장 경로
 	srcFile := "C:\\Downloads\\imsi\\HATEOAS.md"
-	dstFile := "C:\\Downloads\\imsi\\HATEOAS_signed.md"
+	signedFile := "C:\\Downloads\\imsi\\HATEOAS_signed.md"
 
 	// 텍스트 파일 열기
 	file, err := os.Open(srcFile)
@@ -41,18 +41,25 @@ func main() {
 		if lineNumber == 2 {
 			modifiedLines = append(modifiedLines, getDocInfo(getFileInfo(srcFile)))
 		}
+
+		// converting cancel what already converted
+		indexCopylight := strings.Index(line, "Copyright")
+		if indexCopylight > 0 {
+			fmt.Println("File already converted!!")
+			os.Exit(0)
+		}
 	}
 	// add copylight at last line
 	modifiedLines = append(modifiedLines, getDocCopylight())
 
 	// write to new file
-	err = ioutil.WriteFile(dstFile, []byte(strings.Join(modifiedLines, "\n")), 0644)
+	err = ioutil.WriteFile(signedFile, []byte(strings.Join(modifiedLines, "\n")), 0644)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("File converting finish!!")
+	fmt.Println("File converting OK!!")
 
 }
 
